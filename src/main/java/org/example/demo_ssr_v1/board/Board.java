@@ -23,4 +23,32 @@ public class Board {
     @CreationTimestamp
     private Timestamp createdAt;
 
+    public Board(String title, String content, String username) {
+        this.title = title;
+        this.content = content;
+        this.username = username;
+    }
+
+    // Board 상태값 수정하는 로직
+    public void update(BoardRequest.UpdateDTO updateDTO) {
+        // 유효성 검사 처리
+        updateDTO.validate();
+
+        this.title = updateDTO.getTitle();
+        this.content = updateDTO.getContent();
+        this.username = updateDTO.getUsername();
+    }
+
+    // 개별 필드 수정 - title
+    public void updateTitle(String newTitle) {
+        // 방어적 코드
+        if (newTitle == null || newTitle.trim().isEmpty()) throw new IllegalArgumentException("수정값을 입력해주세요");
+        this.title = newTitle;
+    }
+
+    // 개별 필드 수정 - content
+    public void updateContent(String newContent) {
+        if (newContent == null || newContent.trim().isEmpty()) throw new IllegalArgumentException("수정값을 입력해주세요");
+        this.content = newContent;
+    }
 }

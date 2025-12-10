@@ -6,22 +6,22 @@
         <div class="card-header"><b>글수정하기 화면입니다</b></div>
         <div class="card-body">
 
-            <form action="/board/1/update" method="post">
+            <form action="/board/{{board.id}}/update" method="post">
                 <div class="mb-3">
                     <input type="text" class="form-control"
                            placeholder="Enter username"
                            name="username"
-                           value="">
+                           value="{{board.username}}">
                 </div>
 
                 <div class="mb-3">
                     <input type="text" class="form-control"
                            placeholder="Enter title"
                            name="title"
-                           value="">
+                           value="{{board.title}}">
                 </div>
                 <div class="mb-3">
-                    <textarea class="form-control" rows="5" name="content"></textarea>
+                    <textarea class="form-control" rows="5" name="content">{{board.content}}</textarea>
                 </div>
 
                 <!-- 수정 완료 버튼: 클릭시 폼 데이터가 POST로 전송됨 -->
