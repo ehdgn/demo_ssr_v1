@@ -53,15 +53,12 @@ public class UserRequest {
     @Data
     public static class UpdateDTO {
         private String password;
-        private String email;
+
         // username은 제외: 변경 불가능한 고유 식별자
 
         public void validate() {
             if (password == null || password.trim().isEmpty())
                 throw new IllegalArgumentException("비밀번호를 입력해주세요");
-
-            if (email == null || email.trim().isEmpty())
-                throw new IllegalArgumentException("이메일을 입력해주세요");
 
             if (password.length() < 4)
                 throw new IllegalArgumentException("비밀번호는 4글자 이상이어야 합니다.");
