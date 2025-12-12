@@ -1,6 +1,7 @@
 package org.example.demo_ssr_v1.board;
 
 import lombok.Data;
+import org.example.demo_ssr_v1.user.User;
 
 // 정적 내부 클래스 활용
 // 컨트롤러와 비즈니스 로직 사이에서 데이터를 전송하는 객체
@@ -13,8 +14,8 @@ public class BoardRequest {
         private String content;
         private String username;
 
-        public Board toEntity() {
-            return new Board(title, content, username);
+        public Board toEntity(User user) {
+            return new Board(title, content, user);
         }
     }
 
