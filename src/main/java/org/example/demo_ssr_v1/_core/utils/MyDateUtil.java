@@ -1,4 +1,4 @@
-package org.example.demo_ssr_v1.utils;
+package org.example.demo_ssr_v1._core.utils;
 
 import org.springframework.format.annotation.DateTimeFormat;
 

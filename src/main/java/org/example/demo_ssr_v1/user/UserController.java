@@ -2,6 +2,8 @@ package org.example.demo_ssr_v1.user;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.example.demo_ssr_v1._core.errors.exception.Exception403;
+import org.example.demo_ssr_v1._core.errors.exception.Exception404;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,14 +27,19 @@ public class UserController {
         // 2. 유효성 검사 (x)
         // 인증 검사를 하려면 세션 메모리에 접근해서 사용자의 정보가 있는지 없는지 여부 확인
         User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null) {
-            System.out.println("로그인 하지 않은 사용자 입니다.");
-            return "redirect:/login";
-        }
-        // 밑으로 온다면 로그인 한 사용자가 맞음
-        User user = userRepository.findById(sessionUser.getId());
-        model.addAttribute("user", user);
+        // LoginInterceptor가 알아서 처리 해줌
 
+        // 2. 인가 처리
+        // 세션의 사용자 ID로 회원 정보 조회
+        User user = userRepository.findById(sessionUser.getId());
+        if (user == null)
+            throw new Exception404("사용자를 찾을 수 없습니다.");
+
+        if (!user.isOwner(sessionUser.getId())) {
+            throw new Exception403("회원정보 수정 권한이 없습니다.");
+        }
+
+        model.addAttribute("user", user);
         return "user/update-form";
     }
 
@@ -43,10 +50,16 @@ public class UserController {
     public String updateProc(UserRequest.UpdateDTO updateDTO, HttpSession session) {
         // 1. 인증 검사 (o)
         User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null) {
-            System.out.println("로그인 하지 않은 사용자 접근 막음");
-            return "redirect:/login";
-        }
+        // LoginInterceptor가 알아서 처리 해줌
+
+        // 인가 처리 (DB 정보 조회)
+        User user = userRepository.findById(sessionUser.getId());
+        if (user == null)
+            throw new Exception404("사용자를 찾을 수 없습니다.");
+
+        if (!user.isOwner(sessionUser.getId()))
+            throw new Exception403("회원 정보 수정 권한이 없습니다.");
+
         // 2. 유효성 검사 (o)
         // 3. 세션 메모리에 있던 기존 상태값을 변경 처리
         try {

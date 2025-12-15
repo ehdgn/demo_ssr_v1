@@ -33,9 +33,7 @@ public class BoardController {
 
         // 1. 인증 검사 (o)
         User sessionUser = (User) session.getAttribute("sessionUser"); // sessionUser -> 상수
-        if (sessionUser == null) {
-            throw new Exception401("로그인 먼저 해주세요 😎");
-        }
+        // LoginInterceptor가 알아서 처리 해줌
 
         // 2. 인가 검사 (o)
         Board board = repository.findById(id);
@@ -102,9 +100,8 @@ public class BoardController {
     @GetMapping("/board/save")
     public String saveForm(HttpSession session) {
         User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null) {
-            throw new Exception401("로그인 먼저 해주세요");
-        }
+        // LoginInterceptor가 알아서 처리 해줌
+
         return "board/save-form";
     }
 
@@ -119,9 +116,7 @@ public class BoardController {
 
         // 1. 인증 처리 확인
         User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null) {
-            throw new Exception401("로그인 먼저 해주세요");
-        }
+        // LoginInterceptor가 알아서 처리 해줌
 
         Board board = saveDTO.toEntity(sessionUser);
         repository.save(board);
@@ -138,9 +133,7 @@ public class BoardController {
     public String delete(@PathVariable Long id, HttpSession session) {
         // 1. 인증 처리 (o)
         User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null) {
-            throw new Exception401("로그인 먼저 해주세요");
-        }
+        // LoginInterceptor가 알아서 처리 해줌
 
         // 2. 인가 처리 (o) || 관리자 권한
         Board board = repository.findById(id);

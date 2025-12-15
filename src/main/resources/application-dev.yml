@@ -57,5 +57,9 @@ spring:
       hibernate:
         # SQL 쿼리를 보기 좋게 포맷팅
         format_sql: true
+        # N + 1 문제 해결: LAZY 로딩 시 연관 된 엔티티를 배치로 한 번에 가져오기
+        # 게시글 목록 조회 시 만약 (username 필요하다면)
+        # 배치로 묶어서 한 번에 가져옴 (IN 쿼리 사용)
+        default_batch_fetch_size: 100
     # data.sql 파일을 Hibernate 초기화 이후에 실행
     defer-datasource-initialization: true
