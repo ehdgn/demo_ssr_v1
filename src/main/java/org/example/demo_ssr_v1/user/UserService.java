@@ -25,10 +25,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserService {
 
+    // 객체 지향 개념 --> SOLID 원칙
+    // DIP - 추상화가 높은 녀석을 선언하는 것이 좋다.
     private final UserRepository userRepository;
 
     @Transactional
     public User 회원가입(UserRequest.JoinDTO joinDTO) {
+
+        // 유효성 검사
+        joinDTO.validate();
 
         // 1. 사용자명 중복 체크
         if (userRepository.findByUsername(joinDTO.getUsername()).isPresent()) {
@@ -82,6 +87,4 @@ public class UserService {
 
         return userEntity;
     }
-
-
 }

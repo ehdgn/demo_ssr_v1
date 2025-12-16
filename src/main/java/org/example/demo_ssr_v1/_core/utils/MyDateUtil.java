@@ -7,16 +7,15 @@ import java.time.format.DateTimeFormatter;
 
 
 public class MyDateUtil {
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-
+    // 정적 변수로 포맷터를 선언해두면 성능상 더 유리합니다.
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    // 정적 메서드 (기능) 시간 포맷터
-    public static String setNewTimeStamp(Timestamp time) {
-        // timestamp 받아서 변환
-        if (time == null) return null;
-
-        return time.toLocalDateTime().toString();
+    public static String timestampFormat(Timestamp time) {
+        if (time == null) {
+            return null;
+        }
+        // Timestamp -> LocalDateTime 변환 후 포맷 적용
+        return time.toLocalDateTime().format(FORMATTER);
     }
 }
 
