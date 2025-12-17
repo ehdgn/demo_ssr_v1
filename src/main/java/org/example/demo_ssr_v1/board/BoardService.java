@@ -3,6 +3,7 @@ package org.example.demo_ssr_v1.board;
 import lombok.RequiredArgsConstructor;
 import org.example.demo_ssr_v1._core.errors.exception.Exception403;
 import org.example.demo_ssr_v1._core.errors.exception.Exception404;
+import org.example.demo_ssr_v1.reply.ReplyRepository;
 import org.example.demo_ssr_v1.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final ReplyRepository replyRepository;
 
     /**
      * 게시글 목록 조회
@@ -149,6 +151,9 @@ public class BoardService {
             throw new Exception403("게시글 삭제 권한이 없습니다.");
 
         // 4
+        replyRepository.deleteByBoardId(boardId);
+
+        // 5
         boardRepository.deleteById(boardId);
     }
 }
