@@ -26,13 +26,16 @@ public class User {
     @CreationTimestamp
     private Timestamp createdAt;
 
+    private String profileImage;
+
     @Builder
-    public User(Timestamp createdAt, String email, Long id, String password, String username) {
-        this.createdAt = createdAt;
-        this.email = email;
+    public User(Long id, String username, String password, String email, Timestamp createdAt, String profileImage) {
         this.id = id;
-        this.password = password;
         this.username = username;
+        this.password = password;
+        this.email = email;
+        this.createdAt = createdAt;
+        this.profileImage = profileImage;
     }
 
     // 회원 정보 수정 비즈니스 로직 추가

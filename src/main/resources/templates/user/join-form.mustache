@@ -2,13 +2,18 @@
 
 <div class="container p-5">
 
-    <!-- 요청을 하면 localhost:8080/join POST로 요청됨
-    username=사용자입력값&password=사용자값&email=사용자입력값 -->
+    <!--
+        파일 업로드를 위한 form 태그 설정
+        enctype="multipart/form-data : 파일 형식을 포함한 MIME 타입을 의미한다.
+        즉, 이 속성 없이는 파일이 서버로 전송되지 않는다.
+        일반 텍스트 데이터는 - application/x-www-form-urlencoded
+        파일 데이터는 - multipart/form-data 필요
+    -->
 
     <div class="card">
         <div class="card-header"><b>회원가입을 해주세요</b></div>
         <div class="card-body">
-            <form action="/join" method="post" enctype="application/x-www-form-urlencoded">
+            <form action="/join" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <input type="text" class="form-control" placeholder="Enter username" name="username">
                 </div>
@@ -17,6 +22,11 @@
                 </div>
                 <div class="mb-3">
                     <input type="email" class="form-control" placeholder="Enter email" name="email">
+                </div>
+                <div class="mb-3">
+                    <label for="profileImage" class="form-label">프로필 사진(선택사항)</label>
+                    <input type="file" class="form-control" id="profileImage" name="profileImage" accept="image/*">
+                    <small class="form-text text-muted mt-1">이미지 파일만 업로드 가능합니다(JPG, PNG, GIF 등)</small>
                 </div>
                 <button type="submit" class="btn btn-primary form-control">회원가입</button>
             </form>

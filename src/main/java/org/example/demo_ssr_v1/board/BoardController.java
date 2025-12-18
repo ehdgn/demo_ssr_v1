@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.demo_ssr_v1.reply.ReplyResponse;
 import org.example.demo_ssr_v1.reply.ReplyService;
 import org.example.demo_ssr_v1.user.User;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -74,6 +73,7 @@ public class BoardController {
         int pageIndex = Math.max(0, page - 1);
         BoardResponse.PageDTO boardPage = boardService.게시글목록조회(pageIndex, size, keyword);
         model.addAttribute("boardPage", boardPage);
+        model.addAttribute("keyword", keyword);
         return "board/list";
     }
 

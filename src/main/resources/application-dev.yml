@@ -15,12 +15,11 @@ logging:
     com.example: DEBUG   # 내 프로젝트는 DEBUG 이상 모두 출력
 
 spring:
-  # Mustache 템플릿 엔진 설정
-  mustache:
-    servlet:
-      # 세션과 요청 속성을 템플릿에서 사용 가능하게 함
-#      expose-session-attributes: true
-#      expose-request-attributes: true
+  servlet:
+    multipart:
+      enabled: true           # 파일업로드 활성화
+      max-file-size: 10MB     # 개별 파일 최대 크기
+      max-request-size: 10MB  # 전체 요청 최대 크기
 
   # 데이터베이스 연결 설정 (H2 인메모리 데이터베이스)
   datasource:
