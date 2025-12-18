@@ -62,23 +62,17 @@ public class BoardController {
      * 게시글 목록 페이징 처리 기능 추가
      * @param model
      * @return
-     * // 예시: /board/list?page=1&size=5
+     * // 예시: /board/list?page=1&size=5&keyword="사용자입력값"
      */
     @GetMapping({"/board/list", "/"})
 //    @ResponseBody // 뷰 리졸브 (x) 데이터를 반환
     public String boardList(Model model,
                                  @RequestParam(defaultValue = "1") int page,
-                                 @RequestParam(defaultValue = "3") int size) {
-
-        // 1. 페이지 번호 변환: 사용자는 1부터 시작하는 페이지 번호를 사용하지만
-        //    Spring의 Pageable은 0부터 시작하므로 1을 빼서 변환해야 한다.
+                                 @RequestParam(defaultValue = "3") int size,
+                                 @RequestParam(required = false) String keyword) {
 
         int pageIndex = Math.max(0, page - 1);
-        // size = 5 (일단 고정) - 한 페이지에 보여야 할 개수
-
-        boardService.게시글목록조회(pageIndex, size);
-
-        BoardResponse.PageDTO boardPage = boardService.게시글목록조회(pageIndex, size);
+        BoardResponse.PageDTO boardPage = boardService.게시글목록조회(pageIndex, size, keyword);
         model.addAttribute("boardPage", boardPage);
         return "board/list";
     }

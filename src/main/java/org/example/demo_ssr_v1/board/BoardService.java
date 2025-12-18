@@ -62,7 +62,7 @@ public class BoardService {
      * - 읽기 전용 트랜잭션 - 성능 최적화
      * @return 게시글 목록 (생성일 기준으로 내림차순)
      */
-    public BoardResponse.PageDTO 게시글목록조회(int page, int size) {
+    public BoardResponse.PageDTO 게시글목록조회(int page, int size, String keyword) {
 
 
         //** 상한선 제한 **
@@ -76,10 +76,13 @@ public class BoardService {
         // 정렬기준
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(validPage, validSize, sort);
-
-        // Page<Board>
-        Page<Board> boardPage = boardRepository.findAllWithUserOrderByCreatedAtDesc(pageable);
-        // new Page(page1);
+        // [...스프링...] [검색][초기화]
+        Page<Board> boardPage;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            boardPage = boardRepository.findByTitleContainingOrContentContaining(keyword.trim(), pageable);
+        } else {
+         boardPage = boardRepository.findAllWithUserOrderByCreatedAtDesc(pageable);
+        }
 
         return new BoardResponse.PageDTO(boardPage);
     }

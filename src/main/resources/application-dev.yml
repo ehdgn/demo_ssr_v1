@@ -19,8 +19,8 @@ spring:
   mustache:
     servlet:
       # 세션과 요청 속성을 템플릿에서 사용 가능하게 함
-      expose-session-attributes: true
-      expose-request-attributes: true
+#      expose-session-attributes: true
+#      expose-request-attributes: true
 
   # 데이터베이스 연결 설정 (H2 인메모리 데이터베이스)
   datasource:
