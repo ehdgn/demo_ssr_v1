@@ -1,0 +1,52 @@
+{{> layout/header}}
+
+<div class="container p-5">
+    <div class="card">
+        <div class="card-header"><b>회원정보</b></div>
+        <div class="card-body">
+            <div class="text-center mb-4">
+                {{#user.profileImage}}
+                {{! src 경로가 /images/ 면 스프링에 등록한 리소스 핸들러가 동작 함}}
+                <img src="/images/{{user.profileImage}}" alt="프로필 사진" class="rounded-circle border"
+                     style="width: 200px; height: 200px; object-fit: cover">
+                <div class="mt-2">
+                    <form action="/user/profile-image/delete" method="post" style="display: inline">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                            onclick="return confirm('프로필 사진을 삭제하시겠습니까?')">프로필 삭제</button>
+                    </form>
+                </div>
+                {{/user.profileImage}}
+                <!-- 이미지가 없을 때 렌더링 처리-->
+                {{^user.profileImage}}
+                <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center border"
+                     style="width: 200px; height: 200px;">
+                    <span class="text-white fs-5">프로필 사진 없음</span>
+                </div>
+                {{/user.profileImage}}
+                <!-- 프로필 이미지 없음 end -->
+            </div>
+
+
+            <div class="mb-3">
+                <label for="" class="form-label fw-bold">사용자명</label>
+                <p class="form-control-plaintext">{{user.username}}</p>
+            </div>
+            <div class="mb-3">
+                <label for="" class="form-label fw-bold">이메일</label>
+                <p class="form-control-plaintext">{{user.email}}</p>
+            </div>
+            <div class="mb-3">
+                <label for="" class="form-label fw-bold">가입일</label>
+                <p class="form-control-plaintext">{{user.createdAt}}</p>
+            </div>
+            <div class="d-grid gap-2 mb-3">
+                <a href="/user/update" class="btn btn-primary">회원정보 수정</a>
+                <a href="/board/list" class="btn btn-secondary">목록으로</a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{{> layout/footer}}
