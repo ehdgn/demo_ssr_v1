@@ -8,17 +8,38 @@
     <div class="card">
         <div class="card-header"><b>회원수정을 해주세요</b></div>
         <div class="card-body">
-            <form action="/user/update" method="post" enctype="application/x-www-form-urlencoded">
+            <div class="text-center mb-4">
+                {{#user.profileImage}}
+                    <img src="/images/{{user.profileImage}}" alt="프로필 사진" class="rounded-circle border"
+                         style="width: 200px; height: 200px; object-fit: cover">
+                {{/user.profileImage}}
+
+                {{^user.profileImage}}
+                    <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center border"
+                         style="width: 200px; height: 200px;">
+                        <span class="text-white fs-5">프로필 사진 없음</span>
+                    </div>
+                {{/user.profileImage}}
+            </div>
+
+            <!-- 필수! form 태그에 enctype을 반드시 multipart/form-data로 변경해야 한다. -->
+            <form action="/user/update" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <input type="text" class="form-control" placeholder="Enter username" name="username" value={{user.username}} >
+                    <input type="text" class="form-control" placeholder="Enter username" name="username"
+                           value="{{user.username}}">
                 </div>
                 <div class="mb-3">
-                    <input type="password" class="form-control" placeholder="Enter password" name="password">
+                    <input type="password" class="form-control" placeholder="Enter password" name="password" required>
                 </div>
                 <div class="mb-3">
-                    <input type="email" class="form-control" placeholder="Enter email" name="email" value={{user.email}} >
+                    <input type="email" class="form-control" placeholder="Enter email" name="email" value="{{user.email}}">
                 </div>
-                <button type="submit" class="btn btn-primary form-control">회원정보 수정</button>
+                <div class="mb-3">
+                    <label for="profileImage" class="form-label">프로필 사진(선택사항)</label>
+                    <input type="file" class="form-control" id="profileImage" name="profileImage" accept="image/*">
+                    <small class="form-text text-muted mt-1">이미지 파일만 업로드 가능합니다(JPG, PNG, GIF)</small>
+                </div>
+                <button type="submit" class="btn btn-primary form-control">회원정보수정</button>
             </form>
         </div>
     </div>

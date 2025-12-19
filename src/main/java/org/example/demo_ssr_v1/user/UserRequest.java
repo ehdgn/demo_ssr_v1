@@ -59,8 +59,8 @@ public class UserRequest {
     @Data
     public static class UpdateDTO {
         private String password;
-
-        // username은 제외: 변경 불가능한 고유 식별자
+        private MultipartFile profileImage; // form에 name 속성 이름과 동일해야 함
+        private String profileImageFilename; // 추후 user.update 메서드에서 사용 함
 
         public void validate() {
             if (password == null || password.trim().isEmpty())

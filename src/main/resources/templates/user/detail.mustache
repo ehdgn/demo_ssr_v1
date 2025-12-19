@@ -6,7 +6,6 @@
         <div class="card-body">
             <div class="text-center mb-4">
                 {{#user.profileImage}}
-                {{! src 경로가 /images/ 면 스프링에 등록한 리소스 핸들러가 동작 함}}
                 <img src="/images/{{user.profileImage}}" alt="프로필 사진" class="rounded-circle border"
                      style="width: 200px; height: 200px; object-fit: cover">
                 <div class="mt-2">
@@ -16,14 +15,13 @@
                     </form>
                 </div>
                 {{/user.profileImage}}
-                <!-- 이미지가 없을 때 렌더링 처리-->
+
                 {{^user.profileImage}}
                 <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center border"
                      style="width: 200px; height: 200px;">
                     <span class="text-white fs-5">프로필 사진 없음</span>
                 </div>
                 {{/user.profileImage}}
-                <!-- 프로필 이미지 없음 end -->
             </div>
 
 
