@@ -1,10 +1,12 @@
 package org.example.demo_ssr_v1.reply;
 
+import lombok.Data;
 import org.example.demo_ssr_v1._core.utils.MyDateUtil;
 
 public class ReplyResponse {
 
     // 게시글 상세보기에서 댓글 목록을 뿌려 줘야 한다.
+    @Data
     public static class ListDTO {
         private Long id;
         private String comment;
