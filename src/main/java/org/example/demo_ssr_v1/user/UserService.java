@@ -71,7 +71,7 @@ public class UserService {
     public User 로그인(UserRequest.LoginDTO loginDTO) {
 
         // 사용자가 던진 값과 DB에 있는 사용자 이름과 비밀번호를 확인해 주어야 한다.
-        User userEntity = userRepository.findByUsernameAndPassword(
+        User userEntity = userRepository.findByUsernameAndPasswordWithRoles(
                 loginDTO.getUsername(),
                 loginDTO.getPassword())
                 .orElse(null); // 로그인 실패시 null 반환
