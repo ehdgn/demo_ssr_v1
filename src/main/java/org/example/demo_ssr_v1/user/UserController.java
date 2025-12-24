@@ -2,10 +2,12 @@ package org.example.demo_ssr_v1.user;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.example.demo_ssr_v1._core.errors.exception.Exception401;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 사용자 Controller (표현 계층)
@@ -21,6 +23,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping("/user/kakao")
+    public String kakaoCallback(@RequestParam(name = "code") String code, HttpSession session) {
+
+        try {
+            // 서비스 단에 비즈니스 로직을 위임 처리
+            User user = userService.카카오소셜로그인(code);
+            // 세션 정보에 사용자 정보 저장
+            session.setAttribute("sessionUser", user);
+            return "redirect:/";
+        } catch (Exception e) {
+            System.out.println("소셜 로그인 실패 " + e.getMessage());
+            // alert 창 (에러메세지) --> 로그인 페이지로 이동 처리
+            throw new Exception401(e.getMessage());
+        }
+    }
 
     // 프로필 이미지 삭제하기
     @PostMapping("/user/profile-image/delete")
@@ -81,7 +99,6 @@ public class UserController {
         }
 
     }
-
 
     // 로그아웃 기능 요청
     // http://localhost:8080/logout

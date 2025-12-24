@@ -67,3 +67,10 @@ spring:
     # - false : 트랜잭션 종료 시 세션 종료(LAZY 로딩 불가, 명시적 조회 필요(트리거))
     # - false 설정 시 Service 에서 필요한 데이터를 모두 조회하고 DTO로 변환 해야 함
     open-in-view: false
+
+oauth:
+  kakao:
+    client-id: ${KAKAO_CLIENT_ID}
+
+tenco:
+  key: ${TENCO_KEY}

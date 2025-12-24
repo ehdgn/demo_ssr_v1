@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.example.demo_ssr_v1._core.interceptor.AdminInterceptor;
 import org.example.demo_ssr_v1._core.interceptor.LoginInterceptor;
 import org.example.demo_ssr_v1._core.interceptor.SessionInterceptor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -43,6 +46,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/login",
                         "/join",
                         "/logout",
+                        "/user/kakao", // 카카오 리다이렉트 URI는 제외
                         "/board/list",
                         "/",
                         "/board/{id:\\d+}",
@@ -51,6 +55,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/images/**",
                         "/favicon.io",
                         "/h2-console/**"
+
                 );
                 // \\d+는 정규표현식으로 1개 이상의 숫자를 의미
                 // /board/1, /board/1234 <-- 허용
@@ -75,11 +80,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 머스태치 이미지 태그에 src 경로에 /images/** 같은 경로로 설정 되어 있다면
         // 스프링이 알아서 내 폴더 file:(프로젝트 루트 디렉토리)안에 images/ 폴더를 찾게 한다.
         registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:///D:/uploads/");
+                .addResourceLocations("file:///C:/uploads/");
         //** file:/// 문법 설명
         // file: 파일 시스템을 가리킨다는 의미
         // 파일 시스템에서 절대 경로를 의미하는 URI 표기법은 -> ///: 이다.
         // file:images/는 앞에 슬러시가 없기 때문에 상대 경로를 의미한다.
         // file:///D:/upload/ <-- 내 컴퓨터 절대 경로를 의미한다.
+    }
+
+    @Bean // IoC 처리 (스프링 컨테이너의 싱글톤 패턴으로 객체가 메모리에 올라간다)
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

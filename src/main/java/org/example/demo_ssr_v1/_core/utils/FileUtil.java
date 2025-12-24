@@ -12,7 +12,7 @@ import java.util.UUID;
 public class FileUtil {
 
     // 프로젝트 루트 폴더 아래에 images/ 폴더를 생성할 예정 (프로필 이미지만 넣을 예정)
-    public static final String IMAGES_DIR = "D:/uploads/";
+    public static final String IMAGES_DIR = "C:/uploads/";
 
     public static String saveFile(MultipartFile file) throws IOException {
         return saveFile(file, IMAGES_DIR);
