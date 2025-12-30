@@ -1,7 +1,6 @@
 {{> layout/header}}
 
 <div class="container p-5">
-
     {{#isOwner}}
         <div class="d-flex justify-content-end mb-2">
             <a href="/board/{{board.id}}/update" class="btn btn-warning me-2">수정</a>
@@ -11,17 +10,56 @@
         </div>
     {{/isOwner}}
 
-    <div class="d-flex justify-content-end">
-        <b>작성자</b> : {{board.username}}
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+            {{#board.premium}}
+                <span class="badge bg-danger">유료 게시글</span>
+            {{/board.premium}}
+        </div>
+        <div>
+            <b>작성자</b> : {{board.username}}
+        </div>
     </div>
 
     <div>
         <h2><b>{{board.title}}</b></h2>
-        <hr />
-        <div class="m-4 p-2">
+        <hr/>
+        <!-- 유료 게시글 일 경우 -->
+        {{#board.premium}}
+            <!-- 유료 게시글 중 구매 안한 사용자, 자신이 작성 안한 글일 경우 -->
+            {{^board.isPurchased}}
+                {{^isOwner}}
+                    <div class="position-relative">
+                        <div class="position-absolute top-50 start-50 translate-middle"
+                             style="z-index: 1000; border: 1px solid black; padding: 2rem; border-radius: 10px; background: rgba(255, 255, 255, 0.9)">
+                            <h4 class="text-danger mb-3">🔒유료 게시글</h4>
+                            <p>이 게시글을 보려면 500 포인트가 필요합니다</p>
+                            {{#sessionUser}}
+                                <button type="button" class="btn btn-primary d-flex" data-bs-toggle="modal" data-bs-target="#myModal">구매하기</button>
+                            {{/sessionUser}}
+                            {{^sessionUser}}
+                                <a href="/login" class="btn btn-primary">로그인 후 구매</a>
+                            {{/sessionUser}}
+                        </div>
+                    </div>
+                {{/isOwner}}
+                {{#isOwner}}
+                    <!-- 작성자는 무료로 볼 수 있음 -->
+                    {{board.content}}
+                {{/isOwner}}
+            {{/board.isPurchased}}
+            {{#board.isPurchased}}
+                <!-- 해당 게시글을 포인트로 구매 했을 경우 -->
+                {{board.content}}
+            {{/board.isPurchased}}
+        {{/board.premium}}
+
+        <!-- 유료 게시글이 아닐 경우 -->
+        {{^board.premium}}
             {{board.content}}
-        </div>
+        {{/board.premium}}
     </div>
+
 
     <div class="card mt-3">
         {{#sessionUser}}
@@ -68,6 +106,35 @@
                     작성된 댓글이 없습니다.
                 </div>
             {{/replyList}}
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">게시글 구매</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <p>이 게시글을 <strong>500포인트</strong>로 구매하시겠습니까?</p>
+                <p class="text-muted small">구매 후에는 언제든지 다시 볼 수 있습니다.</p>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+                <form action="/board/{{board.id}}/purchase" method="post">
+                    <button type="submit" class="btn btn-primary">구매하기</button>
+                </form>
+            </div>
+
         </div>
     </div>
 </div>

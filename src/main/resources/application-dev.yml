@@ -15,6 +15,28 @@ logging:
     com.example: DEBUG   # 내 프로젝트는 DEBUG 이상 모두 출력
 
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    # 발신자 계정
+    username: ehdgn6570@gmail.com
+    # 주의: 일반 구글 로그인 비밀번호 아님 (앱 비밀번호 공백 제거)
+    password: lsagndmimnszucdd
+    properties:
+      mail:
+        smtp:
+          # SMTP 서버 인증 활성화 (ID/PW 검사 여부)
+          auth: true
+          # START TLS (보안 연결)
+          starttls:
+            # 비 암호와 연결을 암호화 연결(TLS)로 승격 활성화
+            enable: true
+            required: true
+          # 타임아웃 설정 - 서버 간 통신 기준
+          # 소켓 연결 제한 시간 (단위 밀리초)
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
   servlet:
     multipart:
       enabled: true           # 파일업로드 활성화
@@ -25,7 +47,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-    url: jdbc:mysql://localhost:3306/myblog?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/myblog?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
     username: root
     password: root
 
@@ -71,6 +93,7 @@ spring:
 oauth:
   kakao:
     client-id: ${KAKAO_CLIENT_ID}
+    client-secret: ${KAKAO_CLIENT_SECRET}
 
 tenco:
   key: ${TENCO_KEY}

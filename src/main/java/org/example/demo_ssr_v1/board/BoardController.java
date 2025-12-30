@@ -2,6 +2,7 @@ package org.example.demo_ssr_v1.board;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.example.demo_ssr_v1.purchase.PurchaseService;
 import org.example.demo_ssr_v1.reply.ReplyResponse;
 import org.example.demo_ssr_v1.reply.ReplyService;
 import org.example.demo_ssr_v1.user.User;
@@ -17,6 +18,7 @@ public class BoardController {
 
     private final BoardService boardService;
     private final ReplyService replyService;
+    private final PurchaseService purchaseService;
 
     /**
      * 게시글 수정 화면 요청
@@ -122,34 +124,46 @@ public class BoardController {
     }
 
     /**
-     * 게시글 상세보기 화면 요청
+     * 게시글 상세 보기 화면 요청
      * @param boardId
      * @param model
      * @return
      */
-    @GetMapping("/board/{id}")
+    @GetMapping("board/{id}")
     public String detail(@PathVariable(name = "id") Long boardId, Model model, HttpSession session) {
 
-        BoardResponse.DetailDTO board = boardService.게시글상세조회(boardId);
-
         // 세션에 로그인 사용자 정보 조회(없을 수도 있음)
-        User sessionUser = (User) session.getAttribute("sessionUser");
-        boolean isOwner = false;
-
-        if (sessionUser != null && board.getUserId() != null) {
-            isOwner = board.getUserId().equals(sessionUser.getId());
-        }
-
-        // 댓글 목록 조회
-        // 로그인 안 한 상태에서 댓글 목록 요청시에 sessionUserId는 null 값이다.
+        User sessionUser = (User)  session.getAttribute("sessionUser");
         Long sessionUserId = sessionUser != null ? sessionUser.getId() : null;
 
+        BoardResponse.DetailDTO board = boardService.게시글상세조회(boardId, sessionUserId);
+        boolean isOwner = false;
+        // 힌트 - 만약 응답 DTO 에 담겨 있는 정보과
+        // SessionUser 담겨 정보를 확인하여 처리 가능
+        if(sessionUser != null && board.getUserId() != null) {
+            isOwner = board.getUserId().equals(sessionUser.getId());
+        }
+        // 댓글 목록 조회 (추가)
+        // 로그인 안 한 상태에서 댓글 목록 요청시에 sessionUserId 는 null 값이다.
         List<ReplyResponse.ListDTO> replyList = replyService.댓글목록조회(boardId, sessionUserId);
 
         model.addAttribute("isOwner", isOwner);
         model.addAttribute("board", board);
         model.addAttribute("replyList", replyList);
 
-        return "/board/detail";
+        return "board/detail";
+    }
+
+    // /board/{{board.id}}/purchase
+    @PostMapping("/board/{boardId}/purchase")
+    public String purchase(@PathVariable Long boardId, HttpSession session) {
+        // 1. 인증 검사 - 로그인 인터셉터가 동작
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        // 포인트 차감
+        // 구매 내역 저장
+        purchaseService.구매하기(sessionUser.getId(), boardId);
+
+        return "redirect:/board/" + boardId;
+        // 2.
     }
 }

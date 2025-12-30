@@ -14,3 +14,10 @@ logging:
   level:
     org.springframework.web: DEBUG
 
+oauth:
+  kakao:
+    client-id: ${KAKAO_CLIENT_ID}
+    client-secret: ${KAKAO_CLIENT_SECRET}
+
+tenco:
+  key: ${TENCO_KEY}
