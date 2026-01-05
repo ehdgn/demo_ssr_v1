@@ -1,0 +1,169 @@
+{{> layout/header}}
+
+<div class="container p-5">
+    <div class="card">
+        <div class="card-header mb-0">
+            <h4><b>포인트충전</b></h4>
+        </div>
+        <div class="card-body">
+            <div>
+                <label class="form-label fw-bold">현재 보유 포인트</label>
+                <div class="mb-4">
+                    <span class="badge bg-primary fs-5">{{user.point}} P</span>
+                </div>
+            </div>
+            <hr/>
+            <div class="mb-4">
+                <label class="form-label fw-bold">충전할 포인트 선택</label>
+                <!-- row 가로 정렬(12등분 법칙 적용)-->
+                <div class="row g-3">
+                    <div class="col-md-4"><button class="btn btn-outline-primary w-100 point-btn" data-amount="1000">1,000P</button></div>
+                    <div class="col-md-4"><button class="btn btn-outline-primary w-100 point-btn" data-amount="5000">5,000P</button></div>
+                    <div class="col-md-4"><button class="btn btn-outline-primary w-100 point-btn" data-amount="10000">10,000P</button></div>
+                    <div class="col-md-4"><button class="btn btn-outline-primary w-100 point-btn" data-amount="20000">20,000P</button></div>
+                    <div class="col-md-4"><button class="btn btn-outline-primary w-100 point-btn" data-amount="50000">50,000P</button></div>
+                    <div class="col-md-4"><button class="btn btn-outline-primary w-100 point-btn" data-amount="100000">100,000P</button></div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">충전 예정 금액</label>
+                <p class="form-control-plaintext">
+                    <span class="badge bg-success fs-5" id="selectedAmount">0</span> P
+                </p>
+            </div>
+            <!-- d-grid (자식 속성의 가로너비를 꽉 채우게 한다) -->
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-primary" id="chargeBtn" disabled>충전하기</button>
+                <a href="/user/detail" class="btn btn-secondary">취소</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- 포트원 js용 sdk 선언-->
+
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+<script>
+    // 페이지가 완전히 로드된 후 실행
+    document.addEventListener("DOMContentLoaded", function () {
+        // 1. 주요 변수 선언
+        const impKey = 'imp64237500'; // 포트원 관리자 (가맹점)식별 코드 (프론트 용 식별 코드)
+        let selectedAmount = 0; // 사용자가 선택한 버튼의 금액 정보를 담을 변수
+
+        // 필요한 DOM 엘리먼트(노드) 자바 스크립트로 가져 오기 ($ - dom 엘리먼트라는 것을 관행적으로 표시 함)
+        const $btns = document.querySelectorAll('.point-btn'); // 금액 버튼들 (배열로 담김)
+        const $displayAmount = document.getElementById('selectedAmount');
+        const $chargeBtn = document.getElementById('chargeBtn');
+
+        // 3. 화면 업데이트 함수 선언 (충전 예정 금액)
+        function updateAmount(amount) {
+            selectedAmount = amount;
+            $displayAmount.textContent = amount.toLocaleString();
+
+            if (amount > 0) {
+                $chargeBtn.disabled = false;
+            } else {
+                $chargeBtn.disabled = true;
+            }
+        }
+
+        // 2. 금액 버튼들에 이벤트 리스너 등록 및 이벤트 핸들러 처리
+        $btns.forEach(btn => {
+           btn.addEventListener('click', function () {
+               $btns.forEach(b => b.classList.remove('active'));
+               this.classList.add('active');
+
+               const amount = parseInt(this.getAttribute('data-amount'));
+               updateAmount(amount);
+           });
+        });
+
+        // 4. 핵심 충전하기 버튼 클릭시 (결제 시작)
+        $chargeBtn.addEventListener('click', function () {
+
+            // step 1- 결제 사전 준비
+            // 우리 서버에 이 금액으로 주문번호(merchant-uid)생성 요청
+            // 이유: 보안을 위해 주문번호는 반드시 백엔드에서 생성해야 함
+            fetch("/api/payment/prepare", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({amount: selectedAmount})
+            })
+                    .then(res => {
+                        // 200 ~ 299 이 아닌 400번 500번대가 들어온다면 실패
+                        if (!res.ok) {
+                            throw Error("주문번호 생성 실패");
+                        }
+                        return res.json(); // json 문자열을 js Object 파싱 처리
+                    })
+                    .then(data => {
+                        console.log('data object 확인 ' + data.amount);
+                        const merchantUid = data.merchant_uid;
+                        const IMP = window.IMP;
+                        IMP.init("imp64237500");
+                        IMP.request_pay(
+                                {
+                                    channelKey: 'channel-key-35807d0a-6248-45d7-afce-1b25bb3ed241',
+                                    pay_method: "card",
+                                    merchant_uid: merchantUid, // 우리 서버에서 만든 주문 고유 번호
+                                    name: "포인트 충전", // 결제 창에 뜰 상품명
+                                    amount: selectedAmount,
+                                    buyer_email: '{{user.email}}',
+                                    buyer_name: '{{user.username}}',
+                                },
+                                function (response) {
+                                    // 결제 종료 시 호출되는 콜백 함수
+                                    // response.imp_uid 값으로 결제 단건조회 API를 호출하여 결제 결과를 확인하고,
+                                    if (response.success) {
+                                        // 확인하는 과정이 필요함
+                                        console.log(response);
+                                        verifyPayment(response.imp_uid, response.merchant_uid);
+                                    } else {
+                                        alert("결제에 실패했습니다.\n에러내용: " + response.error_msg);
+                                    }
+                                },
+                        );
+                    })
+                    .catch(err => {
+                        alert(err.message);
+                    });
+        });
+
+        // 5. 서버 검증 함수 (최종 승인)
+        function verifyPayment(imp_uid, merchant_uid) {
+            fetch('/api/payment/verify', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    impUid: imp_uid,
+                    merchantUid: merchant_uid
+                })
+            }).then(res => {
+                if (!res.ok) {
+                    // 200 ~ 299가 아닌 값이 들어 왔을 때 처리
+                    return res.json().then((e) => {
+                        // 아래 catch로 잡힘
+                        throw new Error(e.message);
+                    });
+                }
+                // 성공
+                // 상자를 뜯어서 내용물(JSON 문자열)을 꺼내서 js Object로 변환
+                return res.json();
+            }).then(data => {
+                // 모든 검증 통과 (서버단에서 포인트 충전 완료)
+                alert(`충전이 완료되었습니다.\n충전된 금액: ${data.amount}\n`);
+                location.href = '/user/detail';
+            }).catch(err => {
+                alert('결제 검증에 실패했습니다 \n관리자에게 문의하세요');
+            });
+
+
+        }
+
+    }); // end of DOMContentLoaded
+</script>
+
+{{> layout/footer}}
