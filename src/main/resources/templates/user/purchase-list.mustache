@@ -1,0 +1,62 @@
+{{> layout/header}}
+
+<div class="container p-5">
+    <div class="card">
+        <div class="card-header mb-0">
+            <h4><b>유료 게시글 구매 내역</b></h4>
+        </div>
+
+        <!-- 외부 카드 -->
+        <div class="card-body">
+
+            <!-- 내부 카드 (card-body) -->
+            {{#purchaseList}}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+
+                        <div class="flex-grow-1">
+
+                            <h5 class="card-title mb-2">
+                                <!-- 추후 실제 게시글 상세보기 화면으로 이동 -->
+                                <a href="/board/{{boardId}}">
+                                    {{boardTitle}}
+                                </a>
+                            </h5>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-user"></i> 작성자: {{boardAuthor}}
+                            </p>
+                            <p class="text-muted mb-2">
+                                <i class="fa-solid fa-calendar-days"></i> 구매일: {{purchasedAt}}
+                            </p>
+
+                        </div>
+
+                        <div class="text-end">
+                            <span class="badge bg-primary fs-6">{{price}}</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {{/purchaseList}}
+
+            <!-- 유료결제 내역이 없을 경우 -->
+            {{^purchaseList}}
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                <h5>구매 내역이 없습니다.</h5>
+                <p>유료 게시글을 구매해보세요</p>
+                <a href="/board/list" class="btn btn-primary">게시글 목록으로</a>
+            </div>
+            {{/purchaseList}}
+            <div class="mt-4">
+                <a href="/user/detail" class="btn btn-secondary">회원정보로 돌아가기</a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{{> layout/footer}}

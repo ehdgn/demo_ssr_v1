@@ -2,6 +2,7 @@ package org.example.demo_ssr_v1.purchase;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.demo_ssr_v1.board.Board;
 import org.example.demo_ssr_v1.user.User;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
+@Data
 @Entity
 @NoArgsConstructor
 @Table(
@@ -43,7 +45,7 @@ public class Purchase {
     private Integer price;
 
     @CreationTimestamp
-    private Timestamp timestamp;
+    private Timestamp createdAt;
 
     @Builder
     public Purchase(User user, Board board, Integer price) {
