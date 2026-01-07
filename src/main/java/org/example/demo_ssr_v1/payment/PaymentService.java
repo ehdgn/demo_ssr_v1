@@ -3,6 +3,8 @@ package org.example.demo_ssr_v1.payment;
 import lombok.RequiredArgsConstructor;
 import org.example.demo_ssr_v1._core.errors.exception.Exception400;
 import org.example.demo_ssr_v1._core.errors.exception.Exception404;
+import org.example.demo_ssr_v1.refund.Refund;
+import org.example.demo_ssr_v1.refund.RefundRepository;
 import org.example.demo_ssr_v1.user.User;
 import org.example.demo_ssr_v1.user.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,10 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,12 +22,64 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
+    private final RefundRepository refundRepository;
 
     @Value("${portone.imp-key}")
     private String impKey;
 
     @Value("${portone.imp-secret}")
     private String impSecret;
+
+    // 환불 요청 상태를 확인하여 isRefundable을 결정해야 한다.
+    // - 결제 상태가 paid -> 환불 요청이 없는 상태
+    // - 결제 상태가 paid -> 환불 요청 대기중 이거나 승인된 상태
+    // - 결제 상태가 canceled인 경우 (이미 관리자에서 거절 한 경우. 환불 불가)
+
+    public List<PaymentResponse.ListDTO> 결제내역조회(Long userId) {
+
+        List<Payment> paymentList = paymentRepository.findAllByUserId(userId);
+        // [1, 2, 3, 4]
+        return paymentList.stream()
+                .map(payment -> {
+                    // 환불 요청 조회
+                    // 결제 PK 값으로 환불 테이블에 이력이 있는지 없는지 조회
+                    Optional<Refund> refundOpt = refundRepository.findByPaymentId(payment.getId());
+
+                    // 환불 요청이 있는 경우 상태 확인
+                    // 요청이 있으면 true --> 화면에는 환불 요청 버튼 보이면 안됨
+                    boolean hasRefundRequest = refundOpt.isPresent();
+                    boolean isRefundable = false;
+
+                    if ("paid".equals(payment.getStatus())) {
+                        // 1. 결제 완료인 상태
+                        if (!hasRefundRequest) {
+                            // 환불 요청이 없는 상태이기 때문에 환불 요청 가능 상태
+                            isRefundable = true;
+                        } else {
+                            // 환불 요청 대기 상태 --> 원래 false (화면에 버튼 X)
+                            Refund refund = refundOpt.get();
+                            // 관리자가 환불 거절 했지만 다시 요청하도록 한다면
+                            if (refund.isRejected()) {
+                                isRefundable = true;
+                            } else {
+                                isRefundable = false;
+                            }
+                        }
+                    } else {
+                        // 환불 완료 상태
+                        isRefundable = false;
+                    }
+
+                    return new PaymentResponse.ListDTO(payment, isRefundable);
+                })
+                .toList();
+
+
+//        return paymentList.stream()
+//                .map(PaymentResponse.paymentListDTO::new)
+//                .toList();
+
+    }
 
     // 1. 사전 결제 요청
     // 프론트엔드가 결제창을 띄우기 전에, 서버에서 먼저 고유한 주문번호(merchantUid)를 생성해서 내려주기 위함
@@ -166,14 +217,5 @@ public class PaymentService {
         } catch (Exception e) {
             throw new Exception400("포트원 인증 실패: 관리자 설정을 확인하세요");
         }
-    }
-
-    public List<PaymentResponse.paymentListDTO> 결제내역조회(Long userId) {
-
-        List<Payment> paymentList = paymentRepository.findAllByUserId(userId);
-
-        return paymentList.stream()
-                .map(PaymentResponse.paymentListDTO::new)
-                .toList();
     }
 }

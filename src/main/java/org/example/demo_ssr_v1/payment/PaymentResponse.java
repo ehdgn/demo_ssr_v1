@@ -8,24 +8,30 @@ import org.example.demo_ssr_v1._core.utils.MyDateUtil;
 public class PaymentResponse {
 
     @Data
-    public static class paymentListDTO {
+    public static class ListDTO {
         private Long id;
         private String impUid;
         private String merchantUid;
         private Integer amount;
         private String status;
+        private String statusDisplay;
         private String paidAt;
 
-        public paymentListDTO(Payment payment) {
+        // 추가 예정 TODO
+        private Boolean isRefundable; // 환불 가능 여부 (화면에 표시 여부)
+
+        public ListDTO(Payment payment, Boolean isRefundable) {
             this.id = payment.getId();
             this.impUid = payment.getImpUid();
             this.merchantUid = payment.getMerchantUid();
             this.amount = payment.getAmount();
+            this.isRefundable = isRefundable != null ? isRefundable : false;
+
             if (payment.getStatus().equals("canceled")) {
-                this.status = "결제취소";
+                this.statusDisplay = "결제취소";
             }
             if (payment.getStatus().equals("paid")) {
-                this.status = "결제완료";
+                this.statusDisplay = "결제완료";
             }
             if (payment.getTimestamp() != null) {
                 this.paidAt = MyDateUtil.timestampFormat(payment.getTimestamp());
