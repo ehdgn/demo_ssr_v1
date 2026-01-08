@@ -73,7 +73,7 @@ public class Refund {
     }
 
     public void reject(String rejectReason) {
-        this.status = RefundStatus.REJECT;
+        this.status = RefundStatus.REJECTED;
         this.rejectReason = rejectReason;
     }
 
@@ -87,7 +87,7 @@ public class Refund {
     }
 
     public boolean isRejected() {
-        return this.status == RefundStatus.REJECT;
+        return this.status == RefundStatus.REJECTED;
     }
 
 

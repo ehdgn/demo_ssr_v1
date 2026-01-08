@@ -37,6 +37,10 @@ public class PaymentResponse {
                 this.paidAt = MyDateUtil.timestampFormat(payment.getTimestamp());
             }
         }
+
+        public ListDTO(Payment payment) {
+            this(payment, "paid".equals(payment.getStatus()));
+        }
     }
 
     @Data

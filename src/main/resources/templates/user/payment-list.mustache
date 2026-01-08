@@ -38,18 +38,18 @@
                         <div class="text-end">
                             <span class="badge bg-primary fs-6">+{{amount}}</span>
                             {{#isRefundable}}
-                            <a href="/refund/request/1" class="btn btn-outline-danger btn-sm">환불하기</a>
+                            <a href="/refund/request/{{id}}" class="btn btn-outline-danger btn-sm">환불하기</a>
                             {{/isRefundable}}
                         </div>
-
-
-
 
                     </div>
                 </div>
             </div>
             {{/paymentList}}
-            <div class="mt-4">
+            <div class="mt-4 d-flex justify-content-between">
+                <a href="/refund/list" class="btn btn-info">
+                    <i class="fas fa-undo"></i> 환불 요청 내역
+                </a>
                 <a href="/user/detail" class="btn btn-secondary">회원정보로 돌아가기</a>
             </div>
 
