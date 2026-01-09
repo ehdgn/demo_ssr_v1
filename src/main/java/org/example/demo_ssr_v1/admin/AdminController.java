@@ -19,4 +19,13 @@ public class AdminController {
         return "admin/dashboard";
     }
 
+    // 관리자 환불 요청 관리 목록 페이지
+    @GetMapping("/admin/refund/list")
+    public String refundManagement(Model model) {
+        // 서비스에게 데이터 요청
+        // 화면에 뿌려 줌
+
+        return "admin/admin-refund-list";
+    }
+
 }
