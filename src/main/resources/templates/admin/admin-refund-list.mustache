@@ -20,21 +20,23 @@
                 </thead>
                 <tbody>
                 <!-- 반복문 시작  -->
+                {{#refundList}}
                 <tr>
-                    <td>1</td>
-                    <td>ssar2</td>
-                    <td>point-13_UUID</td>
-                    <td>2000</td>
-                    <td>2026.01.09</td>
-                    <td>대기중/승인/거절</td>
+                    <td>{{id}}</td>
+                    <td>{{username}}</td>
+                    <td>{{impUid}}</td>
+                    <td>{{amount}}</td>
+                    <td>{{requestAt}}</td>
+                    <td>{{statusDisplay}}</td>
                     <td>
                         <button type="button" class="btn btn-outline-secondary btn-sm"
                                 data-bs-toggle="modal" data-bs-target="#myModal"
-                        onclick="openRefundModel(1, 'ssar2', 'reason', 2000, '대기중')">
+                        onclick="openRefundModel({{id}}, '{{username}}', '{{reason}}', {{amount}}, '{{statusDisplay}}')">
                             상세
                         </button>
                     </td>
                 </tr>
+                {{/refundList}}
                 <!-- 반복문 종료  -->
                 </tbody>
             </table>
